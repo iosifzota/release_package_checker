@@ -1,0 +1,15 @@
+- key: CCP
+  subfolders:
+    - key: 10_env
+      files:
+        - env1.test
+        - env2.test
+    - key: 20_docs
+      subfolders:
+        - key: Test
+          files:
+            - 01.rep
+            - 02.rep
+      files:
+        - release_note.txt
+        - timestamp.log
