@@ -10,20 +10,20 @@ def parseYaml(file_path):
 
 """
 {
-    ("key", "CCP"),
+    ("parent", "CCP"),
     "subfolders": [
         {
-            "key": "10_env",
+            "parent": "10_env",
             "files": [
                 "env1.test",
                 "env2.test"
             ]
         },
         {
-            "key": "20_docs",
+            "parent": "20_docs",
             "subfolders": [
                 {
-                    "key": "Test",
+                    "parent": "Test",
                     "files": [
                         "01.rep",
                         "02.rep"
