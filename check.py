@@ -19,12 +19,14 @@ def writeYaml(folder_info, file_handler, prev_indentation = ''):
                 prev_indentation += tab_spaces
 
         elif 'files' == info_label:
+            list_of_file_names = info
             file_handler.write(f'{prev_indentation}files:\n')
-            for file_name in info:
+            for file_name in list_of_file_names:
                 file_handler.write(f'{prev_indentation + tab_spaces}- {file_name}\n')
         elif 'subfolders' == info_label:
+            list_of_subfolers = info
             file_handler.write(f'{prev_indentation}subfolders:\n')
-            for subfolder_higherarchy in info:
+            for subfolder_higherarchy in list_of_subfolers:
                 writeYaml(subfolder_higherarchy, file_handler, prev_indentation + tab_spaces)
             
 def check_folder_contents_recursive(parent_folder_path, folder_info):
@@ -41,9 +43,10 @@ def check_folder_contents_recursive(parent_folder_path, folder_info):
                 if not os.path.exists(file_path):
                     return False
         elif 'subfolders' == info_label:
-            for subfolder_info in info:
+            list_of_subfolders = info
+            for subfolder_info in list_of_subfolders:
                 pass
-                # check_folder_contents_recursive(folder_path, subfolder)
+                # check_folder_contents_recursive(parent_folder_path, subfolder_info)
     return True   
 
 def check_folder_contents(folder_path, yaml_desc_file_path):
