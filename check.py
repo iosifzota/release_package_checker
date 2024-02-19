@@ -1,45 +1,11 @@
 import yaml
-import json
 import os
-import shutil
-import unittest
 
 def parseYaml(file_path):
     parsed_data = {}
     with open(file_path, 'r') as file:
         parsed_data = yaml.safe_load(file)
     return parsed_data
-
-"""
-{
-    "name_of_folder": "CCP",
-    "subfolders": [
-        {
-            "name_of_folder": "10_env",
-            "files": [
-                "env1.test",
-                "env2.test"
-            ]
-        },
-        {
-            "name_of_folder": "20_docs",
-            "subfolders": [
-                {
-                    "name_of_folder": "Test",
-                    "files": [
-                        "01.rep",
-                        "02.rep"
-                    ]
-                }
-            ],
-            "files": [
-                "release_note.txt",
-                "timestamp.log"
-            ]
-        }
-    ]
-}
- """
 tab_spaces = ' ' * 2
 
 def writeYaml(folder_info, file_handler, prev_indentation = ''):
@@ -89,6 +55,25 @@ def create_empty_files(folder_path, filelist):
         with open(f'{folder_path}/{filen}', 'w') as file:
             file.write('...')
 
+file_contents = """
+name_of_folder: CCP
+subfolders:
+  - name_of_folder: 10_env
+    files:
+      - env1.test
+      - env2.test
+  - name_of_folder: 20_docs
+    subfolders:
+      - name_of_folder: Test
+        files:
+          - 01.rep
+          - 02.rep
+    files:
+      - release_note.txt
+      - timestamp.log
+"""
+
+# Old version of code. See how clutter it is...
 # def writeYaml(data_in_dict_format, file_path):
 #     prev_indentation = ''
 #     for key, value in data_in_dict_format.items():
@@ -108,24 +93,5 @@ def create_empty_files(folder_path, filelist):
 #                         print(f'{inner_inner_prev_indentation}files:')
 #                         for file_name in inner_value:
 #                             print(f'{inner_inner_prev_indentation + tab_spaces}- {file_name}')
-
-file_contents = """
-name_of_folder: CCP
-subfolders:
-  - name_of_folder: 10_env
-    files:
-      - env1.test
-      - env2.test
-  - name_of_folder: 20_docs
-    subfolders:
-      - name_of_folder: Test
-        files:
-          - 01.rep
-          - 02.rep
-    files:
-      - release_note.txt
-      - timestamp.log
-"""
-
 # pretty = json.dumps(prime_service, indent=4)
 # print(prime_service)

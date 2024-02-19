@@ -1,4 +1,6 @@
 from check import *
+import shutil
+import unittest
 
 from pyfakefs.fake_filesystem_unittest import TestCase
 
@@ -52,3 +54,34 @@ class TestCaseBasic(TestCase):
 
 if __name__ == '__main__':
     unittest.main()  # pragma: no cover
+
+"""
+{
+    "name_of_folder": "CCP",
+    "subfolders": [
+        {
+            "name_of_folder": "10_env",
+            "files": [
+                "env1.test",
+                "env2.test"
+            ]
+        },
+        {
+            "name_of_folder": "20_docs",
+            "subfolders": [
+                {
+                    "name_of_folder": "Test",
+                    "files": [
+                        "01.rep",
+                        "02.rep"
+                    ]
+                }
+            ],
+            "files": [
+                "release_note.txt",
+                "timestamp.log"
+            ]
+        }
+    ]
+}
+ """
