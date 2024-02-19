@@ -42,27 +42,27 @@ def parseYaml(file_path):
  """
 tab_spaces = ' ' * 2
 
-def writeYaml(data_in_dict_format, file_handler, prev_indentation = ''):
-    for key, value in data_in_dict_format.items():
-        if 'name_of_folder' == key:
-            folder_name = value
+def writeYaml(folder_info, file_handler, prev_indentation = ''):
+    for data_label, data in folder_info.items():
+        if 'name_of_folder' == data_label:
+            folder_name = data
             if '' == prev_indentation:
-                file_handler.write(f'{key}: {folder_name}\n')
+                file_handler.write(f'{data_label}: {folder_name}\n')
             else:
-                file_handler.write(f'{prev_indentation}- {key}: {folder_name}\n')
+                file_handler.write(f'{prev_indentation}- {data_label}: {folder_name}\n')
                 prev_indentation += tab_spaces
 
-        elif 'files' == key:
+        elif 'files' == data_label:
             file_handler.write(f'{prev_indentation}files:\n')
-            for file_name in value:
+            for file_name in data:
                 file_handler.write(f'{prev_indentation + tab_spaces}- {file_name}\n')
-        elif 'subfolders' == key:
+        elif 'subfolders' == data_label:
             file_handler.write(f'{prev_indentation}subfolders:\n')
-            for subfolder_higherarchy in value:
+            for subfolder_higherarchy in data:
                 writeYaml(subfolder_higherarchy, file_handler, prev_indentation + tab_spaces)
             
-def check_folder_contents_recursive(parent_folder_path, data_in_dict_format):
-    for data_label, data in data_in_dict_format.items():
+def check_folder_contents_recursive(parent_folder_path, folder_info):
+    for data_label, data in folder_info.items():
         if 'name_of_folder' == data_label:
             folder_name = data
             parent_folder_path = f'{parent_folder_path}/{folder_name}'
@@ -75,14 +75,14 @@ def check_folder_contents_recursive(parent_folder_path, data_in_dict_format):
                 if not os.path.exists(file_path):
                     return False
         elif 'subfolders' == data_label:
-            for subfolder in data:
+            for subfolder_info in data:
                 pass
                 # check_folder_contents_recursive(folder_path, subfolder)
     return True   
 
 def check_folder_contents(folder_path, yaml_desc_file_path):
-    data_in_dict_format = parseYaml(yaml_desc_file_path)
-    return check_folder_contents_recursive(os.path.dirname(folder_path), data_in_dict_format)
+    folder_info = parseYaml(yaml_desc_file_path)
+    return check_folder_contents_recursive(os.path.dirname(folder_path), folder_info)
     
 def create_empty_files(folder_path, filelist):
     for filen in filelist:
