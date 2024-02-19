@@ -9,39 +9,39 @@ def parseYaml(file_path):
 tab_spaces = ' ' * 2
 
 def writeYaml(folder_info, file_handler, prev_indentation = ''):
-    for data_label, data in folder_info.items():
-        if 'name_of_folder' == data_label:
-            folder_name = data
+    for info_label, info  in folder_info.items():
+        if 'name_of_folder' == info_label:
+            folder_name = info
             if '' == prev_indentation:
-                file_handler.write(f'{data_label}: {folder_name}\n')
+                file_handler.write(f'{info_label}: {folder_name}\n')
             else:
-                file_handler.write(f'{prev_indentation}- {data_label}: {folder_name}\n')
+                file_handler.write(f'{prev_indentation}- {info_label}: {folder_name}\n')
                 prev_indentation += tab_spaces
 
-        elif 'files' == data_label:
+        elif 'files' == info_label:
             file_handler.write(f'{prev_indentation}files:\n')
-            for file_name in data:
+            for file_name in info:
                 file_handler.write(f'{prev_indentation + tab_spaces}- {file_name}\n')
-        elif 'subfolders' == data_label:
+        elif 'subfolders' == info_label:
             file_handler.write(f'{prev_indentation}subfolders:\n')
-            for subfolder_higherarchy in data:
+            for subfolder_higherarchy in info:
                 writeYaml(subfolder_higherarchy, file_handler, prev_indentation + tab_spaces)
             
 def check_folder_contents_recursive(parent_folder_path, folder_info):
-    for data_label, data in folder_info.items():
-        if 'name_of_folder' == data_label:
-            folder_name = data
+    for info_label, info in folder_info.items():
+        if 'name_of_folder' == info_label:
+            folder_name = info
             parent_folder_path = f'{parent_folder_path}/{folder_name}'
             if not os.path.exists(parent_folder_path):
                 return False
-        elif 'files' == data_label:
-            list_of_file_names = data
+        elif 'files' == info_label:
+            list_of_file_names = info
             for file_name in list_of_file_names:
                 file_path = f'{parent_folder_path}/{file_name}'
                 if not os.path.exists(file_path):
                     return False
-        elif 'subfolders' == data_label:
-            for subfolder_info in data:
+        elif 'subfolders' == info_label:
+            for subfolder_info in info:
                 pass
                 # check_folder_contents_recursive(folder_path, subfolder)
     return True   
