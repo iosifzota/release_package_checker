@@ -12,20 +12,20 @@ def parseYaml(file_path):
 
 """
 {
-    "parent": "CCP",
+    "name_of_folder": "CCP",
     "subfolders": [
         {
-            "parent": "10_env",
+            "name_of_folder": "10_env",
             "files": [
                 "env1.test",
                 "env2.test"
             ]
         },
         {
-            "parent": "20_docs",
+            "name_of_folder": "20_docs",
             "subfolders": [
                 {
-                    "parent": "Test",
+                    "name_of_folder": "Test",
                     "files": [
                         "01.rep",
                         "02.rep"
@@ -44,41 +44,45 @@ tab_spaces = ' ' * 2
 
 def writeYaml(data_in_dict_format, file_handler, prev_indentation = ''):
     for key, value in data_in_dict_format.items():
-        if key == 'parent':
+        if 'name_of_folder' == key:
             folder_name = value
-            file_handler.write(f'{prev_indentation}- {key}: {folder_name}\n')
-            prev_indentation += tab_spaces
-        elif key == 'files':
+            if '' == prev_indentation:
+                file_handler.write(f'{key}: {folder_name}\n')
+            else:
+                file_handler.write(f'{prev_indentation}- {key}: {folder_name}\n')
+                prev_indentation += tab_spaces
+
+        elif 'files' == key:
             file_handler.write(f'{prev_indentation}files:\n')
             for file_name in value:
                 file_handler.write(f'{prev_indentation + tab_spaces}- {file_name}\n')
-        elif key == 'subfolders':
+        elif 'subfolders' == key:
             file_handler.write(f'{prev_indentation}subfolders:\n')
             for subfolder_higherarchy in value:
                 writeYaml(subfolder_higherarchy, file_handler, prev_indentation + tab_spaces)
             
 def check_folder_contents_recursive(parent_folder_path, data_in_dict_format):
-    for key, value in data_in_dict_format.items():
-        if key == 'parent':
-            folder_name = value
+    for data_label, data in data_in_dict_format.items():
+        if 'name_of_folder' == data_label:
+            folder_name = data
             parent_folder_path = f'{parent_folder_path}/{folder_name}'
             if not os.path.exists(parent_folder_path):
                 return False
-        elif key == 'files':
-            list_of_file_names = value
+        elif 'files' == data_label:
+            list_of_file_names = data
             for file_name in list_of_file_names:
                 file_path = f'{parent_folder_path}/{file_name}'
                 if not os.path.exists(file_path):
                     return False
-        elif key == 'subfolders':
-            for subfolder in value:
+        elif 'subfolders' == data_label:
+            for subfolder in data:
                 pass
                 # check_folder_contents_recursive(folder_path, subfolder)
     return True   
 
 def check_folder_contents(folder_path, yaml_desc_file_path):
     data_in_dict_format = parseYaml(yaml_desc_file_path)
-    return check_folder_contents_recursive(os.path.dirname(folder_path), data_in_dict_format[0])
+    return check_folder_contents_recursive(os.path.dirname(folder_path), data_in_dict_format)
     
 def create_empty_files(folder_path, filelist):
     for filen in filelist:
@@ -106,21 +110,21 @@ def create_empty_files(folder_path, filelist):
 #                             print(f'{inner_inner_prev_indentation + tab_spaces}- {file_name}')
 
 file_contents = """
-- parent: CCP
-  subfolders:
-    - parent: 10_env
-      files:
-        - env1.test
-        - env2.test
-    - parent: 20_docs
-      subfolders:
-        - parent: Test
-          files:
-            - 01.rep
-            - 02.rep
-      files:
-        - release_note.txt
-        - timestamp.log
+name_of_folder: CCP
+subfolders:
+  - name_of_folder: 10_env
+    files:
+      - env1.test
+      - env2.test
+  - name_of_folder: 20_docs
+    subfolders:
+      - name_of_folder: Test
+        files:
+          - 01.rep
+          - 02.rep
+    files:
+      - release_note.txt
+      - timestamp.log
 """
 
 from pyfakefs.fake_filesystem_unittest import TestCase
@@ -141,7 +145,7 @@ class TestCaseBasic(TestCase):
         with open(file_name, 'w') as file:
             file.write(file_contents.strip())
         # Parse yaml from written file
-        folder_structure = parseYaml(file_name)[0]
+        folder_structure = parseYaml(file_name)
 
         # Traverse dictionary and convert back to yaml format.
         regen_file_name = 'should_parse_yaml_and_reprint_it_regenerated.yaml'
@@ -157,17 +161,17 @@ class TestCaseBasic(TestCase):
 
     def test_should_check_if_folder_contens_match_given_yaml_description(self):
         folder_contents_description = """
-    - parent: test01
-      files:
-        - test1.txt
-        - test2.md
+    name_of_folder: test01
+    files:
+      - test1.txt
+      - test2.md
     """
         folder_path = 'res/test01'
         if os.path.exists(folder_path):
             shutil.rmtree(folder_path)
         os.makedirs(folder_path)
         create_empty_files(folder_path, ['test1.txt', 'test2.md'])
-        with open(f'{folder_path}/desc.yaml', 'w') as file:
+        with open(f'{folder_path}/ desc.yaml', 'w') as file:
             file.write(folder_contents_description)
 
         self.assertTrue(check_folder_contents(folder_path, f'{folder_path}/desc.yaml'))
